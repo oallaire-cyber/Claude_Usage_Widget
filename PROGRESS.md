@@ -12,7 +12,7 @@
 
 ## Definition of Done
 
-- [x] `cargo test`, clippy, fmt and frontend build pass locally and in CI on `main` — true at end of run 1 (CI run 36169256569); re-check every run
+- [x] `cargo test`, clippy, fmt and frontend build pass locally and in CI on `main` — true at end of run 1 (CI run 36169256569) and run 2 (CI run 36185017692); re-check every run
 - [x] Bridge: all parser fixtures pass; exits 0 on malformed input; median runtime recorded and < 50 ms (or deviation explained in DECISIONS.md) — 29.5 ms, D-10
 - [x] Install/uninstall scripts pass tests against fake settings files; uninstall restores previous `statusLine` exactly — 50 assertions, byte-identical restore
 - [x] Core: pace, staleness and notification-once logic unit-tested — `merge.rs`, `pace.rs`, `notify.rs`
