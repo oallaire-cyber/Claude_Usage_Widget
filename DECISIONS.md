@@ -107,3 +107,47 @@ the settings file only if install created it and it is empty again. Invalid JSON
 The extraction scripts mask strings > 40 chars, token-like prefixes and UUIDs. The first run printed the
 Claude Desktop organisation UUID once (not a credential) before UUID masking was added; it appears
 nowhere in the repository (fixtures use a zero UUID).
+
+## D-13 · 2026-09-25 · Source B parsed on an assumed shape
+`cachedUsageUtilization` does not exist in Claude Code 2.1.282 (FINDINGS.md), so its shape is a guess.
+The parser deserialises only that key and accepts: window objects keyed by name (snake or camelCase,
+normalised to snake_case) with `utilization` / `used_percentage` / `percent` and `resets_at` / `resetsAt`,
+optionally wrapped in `data`; a block timestamp (`timestamp`, `updatedAt`, …) dates the values, else the
+file's modification time (a timestamp in the future of the mtime is ignored). Anything else yields no
+observations. If a future version writes the block with another shape, only this function changes.
+
+## D-14 · 2026-09-25 · Merge and status rules
+- Status line (A) is **current** when observed ≤ 30 min ago and its `resets_at` has not passed; a current
+  A value always wins. Otherwise the freshest value wins; ties prefer A, then B, then C.
+- If any source says a window reset at time R (R ≤ now), a value **without** a reset time observed before
+  R belongs to the previous cycle and is discarded (prevents showing Desktop's pre-reset 90 % after reset).
+- Per-window status: `window_reset` (now ≥ `resets_at`, display 0 %) takes precedence over `stale`
+  (> 30 min without update), else `ok`. Overall: `no_data` if no window; `stale` if any window is stale;
+  `window_reset` if every window has reset; else `ok`.
+- "Data as of" = freshest `as_of` across windows; the "source" shown = the session window's source.
+- Claude Desktop keys: `fh` → `five_hour`, `sd` → `seven_day`, `xu` → `extra_usage`; unknown keys are
+  kept as `desktop_<key>` extra windows. No reset time is borrowed from another source for Desktop
+  values (countdown/pace shown as unavailable, as the prompt says) — see BACKLOG.
+
+## D-15 · 2026-09-25 · Pace rules
+- Computed only for windows of known length (`five_hour*` = 5 h, `seven_day*` = 7 d) with a reset time
+  in the future. `spend_limit` / `extra_usage` have none.
+- Projection rate: least-squares slope over this cycle's history samples within the last 1/5 of the
+  window (1 h for the session, ~34 h for the week), needing ≥ 3 samples spanning ≥ 1/4 of that period;
+  otherwise the average rate since the window started.
+- Status: `will_exhaust` if already at 100 % or the projection reaches 100 % before the reset;
+  `ahead` if pace ratio ≥ 1.1; else `on_track`. The §4b guards (used < 20 % or elapsed < 10 %) force
+  `on_track` and set `guarded` so the tray colours by plain thresholds.
+- Consequence worth knowing: with the average-rate fallback, a ratio above 1.0 always projects
+  exhaustion, so `ahead` only appears when recent history shows you have slowed down.
+
+## D-16 · 2026-09-25 · Notification rules
+- A threshold fires at most once per window cycle (cycle = `resets_at`, 60 s tolerance). If several
+  thresholds are crossed at once, **one** notification names the highest.
+- Already above a threshold when first seen → notifies (you should know), unless the app has persisted
+  state for that cycle (the app stores `NotifyState`, Phase 5).
+- "Limit reset" notification: on by default, but only for a window that produced a threshold warning in
+  the cycle that just ended; sent once, either when `resets_at` passes or when a new cycle is seen.
+- For Desktop-only data (no reset times) a new cycle is a drop of more than 5 points.
+- With notifications disabled, state still advances silently, so re-enabling does not replay old warnings.
+- Default thresholds: session 80/95 %, weekly 75/90 %; other windows get none unless configured.
