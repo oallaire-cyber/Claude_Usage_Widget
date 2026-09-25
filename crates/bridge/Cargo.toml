@@ -10,6 +10,10 @@ authors.workspace = true
 name = "cuw-bridge"
 path = "src/main.rs"
 
+[lib]
+name = "cuw_bridge"
+path = "src/lib.rs"
+
 [dependencies]
 serde_json.workspace = true
 cuw-core.workspace = true

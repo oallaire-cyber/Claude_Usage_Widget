@@ -18,7 +18,7 @@ cuw-core = { path = "crates/core" }
 codegen-units = 1
 lto = true
 opt-level = 3
-panic = "abort"
+# No `panic = "abort"`: the bridge relies on catch_unwind to always print a line and exit 0.
 strip = true
 
 # The bridge is on Claude Code's hot path: optimise for size and start-up.
