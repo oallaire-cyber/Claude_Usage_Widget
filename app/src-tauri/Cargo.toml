@@ -9,13 +9,19 @@ authors.workspace = true
 [lib]
 # The `_lib` suffix avoids a lib/bin name clash on Windows (rust-lang/cargo#8519).
 name = "cuw_app_lib"
-crate-type = ["staticlib", "cdylib", "rlib"]
+# Desktop only: no staticlib/cdylib (those serve Tauri mobile targets), see DECISIONS.md D-24.
+crate-type = ["rlib"]
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = [] }
+tauri = { version = "2", features = ["tray-icon"] }
 serde.workspace = true
 serde_json.workspace = true
 cuw-core.workspace = true
+tauri-plugin-single-instance = "2"
+tauri-plugin-autostart = "2"
+tauri-plugin-notification = "2"
+notify = "8"
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
