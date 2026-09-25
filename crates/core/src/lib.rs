@@ -2,5 +2,10 @@
 //! contents are always passed in, so everything is unit-testable.
 
 pub mod bridge_state;
+pub mod merge;
+pub mod notify;
+pub mod pace;
+pub mod sources;
 pub mod statusline;
 pub mod time;
+pub mod window;
