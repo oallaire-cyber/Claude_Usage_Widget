@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::bridge_state::SAME_CYCLE_TOLERANCE_SECS;
 use crate::sources::{Observation, Source};
-use crate::window::display_rank;
+use crate::window::{display_rank, FIVE_HOUR, SEVEN_DAY};
 
 /// No update for longer than this while the window is still active = `stale`.
 pub const STALE_AFTER_SECS: i64 = 30 * 60;
@@ -134,11 +134,22 @@ pub fn merge(observations: &[Observation], now: i64) -> Merged {
         })
         .collect();
 
+    // The overall status follows the session and weekly windows when there are any: a side window
+    // that rarely updates (e.g. Claude Desktop's extra usage) must not mark everything stale.
+    let primary: Vec<&MergedWindow> = windows
+        .iter()
+        .filter(|w| w.id == FIVE_HOUR || w.id == SEVEN_DAY)
+        .collect();
+    let judged: Vec<&MergedWindow> = if primary.is_empty() {
+        windows.iter().collect()
+    } else {
+        primary
+    };
     let status = if windows.is_empty() {
         Status::NoData
-    } else if windows.iter().any(|w| w.status == Status::Stale) {
+    } else if judged.iter().any(|w| w.status == Status::Stale) {
         Status::Stale
-    } else if windows.iter().all(|w| w.status == Status::WindowReset) {
+    } else if judged.iter().all(|w| w.status == Status::WindowReset) {
         Status::WindowReset
     } else {
         Status::Ok
@@ -340,6 +351,32 @@ mod tests {
         assert_eq!(m.status, Status::Ok); // session reset, but the others are live
         assert_eq!(m.as_of, Some(NOW));
         assert_eq!(m.source, Some(StatusLine));
+    }
+
+    #[test]
+    fn stale_side_window_does_not_make_everything_stale() {
+        let m = merge(
+            &[
+                obs("five_hour", 30.0, Some(NOW + 3600), NOW, StatusLine),
+                obs("seven_day", 20.0, Some(NOW + 86_400), NOW, StatusLine),
+                obs("extra_usage", 100.0, None, NOW - 12 * 3600, DesktopHistory),
+            ],
+            NOW,
+        );
+        assert_eq!(m.windows[2].status, Status::Stale);
+        assert_eq!(m.status, Status::Ok);
+        // Without session/weekly windows, the side windows decide.
+        let m = merge(
+            &[obs(
+                "extra_usage",
+                100.0,
+                None,
+                NOW - 12 * 3600,
+                DesktopHistory,
+            )],
+            NOW,
+        );
+        assert_eq!(m.status, Status::Stale);
     }
 
     #[test]
