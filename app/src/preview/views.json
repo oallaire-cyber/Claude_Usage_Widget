@@ -1,0 +1,314 @@
+{
+  "crit": {
+    "now": 1790166720,
+    "status": "ok",
+    "as_of": 1790166690,
+    "source": "status_line",
+    "windows": [
+      {
+        "id": "five_hour",
+        "used_percentage": 93,
+        "display_percentage": 93,
+        "resets_at": 1790169720,
+        "as_of": 1790166690,
+        "source": "status_line",
+        "status": "ok",
+        "pace": {
+          "elapsed_fraction": 0.8333333333333334,
+          "pace_ratio": 1.116,
+          "status": "will_exhaust",
+          "projected_exhaustion_at": 1790168400,
+          "basis": "history",
+          "guarded": false
+        },
+        "tone": "red"
+      },
+      {
+        "id": "seven_day",
+        "used_percentage": 91,
+        "display_percentage": 91,
+        "resets_at": 1790263920,
+        "as_of": 1790166690,
+        "source": "status_line",
+        "status": "ok",
+        "pace": {
+          "elapsed_fraction": 0.8392857142857143,
+          "pace_ratio": 1.0842553191489361,
+          "status": "will_exhaust",
+          "projected_exhaustion_at": 1790216923,
+          "basis": "average",
+          "guarded": false
+        },
+        "tone": "red"
+      }
+    ]
+  },
+  "desktop": {
+    "now": 1790166720,
+    "status": "ok",
+    "as_of": 1790166240,
+    "source": "desktop_history",
+    "windows": [
+      {
+        "id": "five_hour",
+        "used_percentage": 41,
+        "display_percentage": 41,
+        "resets_at": null,
+        "as_of": 1790166240,
+        "source": "desktop_history",
+        "status": "ok",
+        "pace": null,
+        "tone": "blue"
+      },
+      {
+        "id": "seven_day",
+        "used_percentage": 19,
+        "display_percentage": 19,
+        "resets_at": null,
+        "as_of": 1790166240,
+        "source": "desktop_history",
+        "status": "ok",
+        "pace": null,
+        "tone": "blue"
+      }
+    ]
+  },
+  "extra": {
+    "now": 1790166720,
+    "status": "ok",
+    "as_of": 1790166660,
+    "source": "status_line",
+    "windows": [
+      {
+        "id": "five_hour",
+        "used_percentage": 34,
+        "display_percentage": 34,
+        "resets_at": 1790178240,
+        "as_of": 1790166660,
+        "source": "status_line",
+        "status": "ok",
+        "pace": {
+          "elapsed_fraction": 0.36,
+          "pace_ratio": 0.9444444444444445,
+          "status": "on_track",
+          "projected_exhaustion_at": null,
+          "basis": "average",
+          "guarded": false
+        },
+        "tone": "blue"
+      },
+      {
+        "id": "seven_day",
+        "used_percentage": 22,
+        "display_percentage": 22,
+        "resets_at": 1790575200,
+        "as_of": 1790166660,
+        "source": "status_line",
+        "status": "ok",
+        "pace": {
+          "elapsed_fraction": 0.3246031746031746,
+          "pace_ratio": 0.6777506112469437,
+          "status": "on_track",
+          "projected_exhaustion_at": null,
+          "basis": "average",
+          "guarded": false
+        },
+        "tone": "blue"
+      },
+      {
+        "id": "seven_day_fable",
+        "used_percentage": 12,
+        "display_percentage": 12,
+        "resets_at": 1790575200,
+        "as_of": 1790166660,
+        "source": "status_line",
+        "status": "ok",
+        "pace": {
+          "elapsed_fraction": 0.3246031746031746,
+          "pace_ratio": 0.369682151589242,
+          "status": "on_track",
+          "projected_exhaustion_at": null,
+          "basis": "average",
+          "guarded": true
+        },
+        "tone": "blue"
+      }
+    ]
+  },
+  "nodata": {
+    "now": 1790166720,
+    "status": "no_data",
+    "as_of": null,
+    "source": null,
+    "windows": []
+  },
+  "normal": {
+    "now": 1790166720,
+    "status": "ok",
+    "as_of": 1790166660,
+    "source": "status_line",
+    "windows": [
+      {
+        "id": "five_hour",
+        "used_percentage": 34,
+        "display_percentage": 34,
+        "resets_at": 1790178240,
+        "as_of": 1790166660,
+        "source": "status_line",
+        "status": "ok",
+        "pace": {
+          "elapsed_fraction": 0.36,
+          "pace_ratio": 0.9444444444444445,
+          "status": "on_track",
+          "projected_exhaustion_at": null,
+          "basis": "history",
+          "guarded": false
+        },
+        "tone": "blue"
+      },
+      {
+        "id": "seven_day",
+        "used_percentage": 22,
+        "display_percentage": 22,
+        "resets_at": 1790575200,
+        "as_of": 1790166660,
+        "source": "status_line",
+        "status": "ok",
+        "pace": {
+          "elapsed_fraction": 0.3246031746031746,
+          "pace_ratio": 0.6777506112469437,
+          "status": "on_track",
+          "projected_exhaustion_at": null,
+          "basis": "average",
+          "guarded": false
+        },
+        "tone": "blue"
+      }
+    ]
+  },
+  "reset": {
+    "now": 1790166720,
+    "status": "ok",
+    "as_of": 1790165520,
+    "source": "status_line",
+    "windows": [
+      {
+        "id": "five_hour",
+        "used_percentage": 88,
+        "display_percentage": 0,
+        "resets_at": 1790166420,
+        "as_of": 1790165520,
+        "source": "status_line",
+        "status": "window_reset",
+        "pace": null,
+        "tone": "grey"
+      },
+      {
+        "id": "seven_day",
+        "used_percentage": 40,
+        "display_percentage": 40,
+        "resets_at": 1790425920,
+        "as_of": 1790165520,
+        "source": "status_line",
+        "status": "ok",
+        "pace": {
+          "elapsed_fraction": 0.5714285714285714,
+          "pace_ratio": 0.7000000000000001,
+          "status": "on_track",
+          "projected_exhaustion_at": null,
+          "basis": "average",
+          "guarded": false
+        },
+        "tone": "blue"
+      }
+    ]
+  },
+  "stale": {
+    "now": 1790166720,
+    "status": "stale",
+    "as_of": 1790164020,
+    "source": "status_line",
+    "windows": [
+      {
+        "id": "five_hour",
+        "used_percentage": 48,
+        "display_percentage": 48,
+        "resets_at": 1790173920,
+        "as_of": 1790164020,
+        "source": "status_line",
+        "status": "stale",
+        "pace": {
+          "elapsed_fraction": 0.6,
+          "pace_ratio": 0.8,
+          "status": "on_track",
+          "projected_exhaustion_at": null,
+          "basis": "average",
+          "guarded": false
+        },
+        "tone": "grey"
+      },
+      {
+        "id": "seven_day",
+        "used_percentage": 30,
+        "display_percentage": 30,
+        "resets_at": 1790425920,
+        "as_of": 1790164020,
+        "source": "status_line",
+        "status": "stale",
+        "pace": {
+          "elapsed_fraction": 0.5714285714285714,
+          "pace_ratio": 0.525,
+          "status": "on_track",
+          "projected_exhaustion_at": null,
+          "basis": "average",
+          "guarded": false
+        },
+        "tone": "grey"
+      }
+    ]
+  },
+  "warn": {
+    "now": 1790166720,
+    "status": "ok",
+    "as_of": 1790166660,
+    "source": "status_line",
+    "windows": [
+      {
+        "id": "five_hour",
+        "used_percentage": 74,
+        "display_percentage": 74,
+        "resets_at": 1790172720,
+        "as_of": 1790166660,
+        "source": "status_line",
+        "status": "ok",
+        "pace": {
+          "elapsed_fraction": 0.6666666666666666,
+          "pace_ratio": 1.11,
+          "status": "will_exhaust",
+          "projected_exhaustion_at": 1790171400,
+          "basis": "history",
+          "guarded": false
+        },
+        "tone": "amber"
+      },
+      {
+        "id": "seven_day",
+        "used_percentage": 71,
+        "display_percentage": 71,
+        "resets_at": 1790339520,
+        "as_of": 1790166660,
+        "source": "status_line",
+        "status": "ok",
+        "pace": {
+          "elapsed_fraction": 0.7142857142857143,
+          "pace_ratio": 0.9939999999999999,
+          "status": "on_track",
+          "projected_exhaustion_at": null,
+          "basis": "average",
+          "guarded": false
+        },
+        "tone": "blue"
+      }
+    ]
+  }
+}
