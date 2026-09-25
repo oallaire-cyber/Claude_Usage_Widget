@@ -2,8 +2,8 @@
 
 ## Phase checklist
 
-- [ ] Phase 0 — Bootstrap
-- [ ] Phase 1 — Bridge, sources, install scripts
+- [x] Phase 0 — Bootstrap (CI green on first push, run 36167329000)
+- [x] Phase 1 — Bridge, sources, install scripts
 - [ ] Phase 2 — Core logic
 - [ ] Phase 3 — Tray icon
 - [ ] Phase 4 — Popup card
@@ -13,8 +13,8 @@
 ## Definition of Done
 
 - [ ] `cargo test`, clippy, fmt and frontend build pass locally and in CI on `main`
-- [ ] Bridge: all parser fixtures pass; exits 0 on malformed input; median runtime recorded and < 50 ms (or deviation explained in DECISIONS.md)
-- [ ] Install/uninstall scripts pass tests against fake settings files; uninstall restores previous `statusLine` exactly
+- [x] Bridge: all parser fixtures pass; exits 0 on malformed input; median runtime recorded and < 50 ms (or deviation explained in DECISIONS.md) — 29.5 ms, D-10
+- [x] Install/uninstall scripts pass tests against fake settings files; uninstall restores previous `statusLine` exactly — 50 assertions, byte-identical restore
 - [ ] Core: pace, staleness and notification-once logic unit-tested
 - [ ] Tray icon colour thresholds verified by pixel test
 - [ ] Preview screenshots exist in `docs/screenshots/` for every state in §5, light and dark
@@ -29,7 +29,7 @@ WebView2 153.0.4234.48 · Windows PowerShell 5.1.26100 · Playwright 1.63.0 avai
 
 ## Next step
 
-Phase 0 in progress: first commit, create GitHub repo, push, get CI green.
+Phase 2 (core logic) in progress.
 
 ## Known issues
 
