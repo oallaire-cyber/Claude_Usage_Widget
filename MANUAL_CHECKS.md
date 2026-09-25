@@ -31,7 +31,46 @@ shipped with the installer).
 3. Note whether claude.ai shows a separate weekly limit for a specific model (e.g. Fable). If it does,
    it will **not** appear in the widget — no local source provides it today (docs/FINDINGS.md).
 
-## 3. Undo (any time)
+## 3. The tray app (after Phases 3–5)
+
+Until the installer exists (Phase 6), run it from the repo in **Windows PowerShell**:
+```powershell
+cd C:\Users\olive\Documents\Claude_Usage_Widget\app
+npm ci
+npx tauri build --debug --no-bundle
+..\target\debug\claude-usage-widget.exe
+```
+It reads the real files (the bridge's `state.json`, `~/.claude.json`, Claude Desktop's history) and
+never writes anywhere except `%APPDATA%\ClaudeUsageWidget\`. What was already checked automatically is in
+DECISIONS.md D-22; what needs your eyes and mouse:
+
+1. **Tray icon** — a ring in the notification area (you may need to drag it out of the `^` overflow
+   onto the taskbar). Blue when on pace, amber when ahead, red near the limit, grey when stale or empty.
+   It should look crisp, not blurry, at your display scaling.
+2. **Tooltip** — hover the icon: `Session 14% · resets 3h49 | Week 8% · resets Wed 06:00` and a second
+   line `as of HH:MM` (in French if Windows is in French).
+3. **Card** — left-click: the card opens just above the icon (or next to it if your taskbar is on
+   another side), fully on screen. Click elsewhere or press **Esc**: it closes. Click the icon again
+   while it is open: it closes and does **not** immediately reopen. If you have a second monitor with a
+   taskbar, try its tray too.
+4. **Right-click menu** — Pin widget · Settings… · Start with Windows · Quit. The two tick marks must
+   match reality after each click.
+5. **Pinned widget** — "Pin widget": a small semi-transparent card appears bottom-right, stays on top,
+   can be **dragged** anywhere (grab the text or ring). Quit and restart the app: it comes back at the same
+   place. Hover shows two small buttons (open card, unpin).
+6. **Settings** — change the language (the card and menu switch), switch notifications off and on,
+   change thresholds (e.g. `50, 95`). Typing something invalid (e.g. `abc`) must underline the field in
+   red and not save.
+7. **Start with Windows** — tick it, then check Task Manager → Startup apps: "Claude Usage Widget" is
+   listed. Sign out and in: only the tray icon (and the pinned widget, if pinned) appears, no card.
+   Untick to remove the entry.
+8. **Notifications** — when usage crosses 80 % (session) or 75 % (weekly), one toast appears, once per
+   window. With this development build the toast is labelled **Windows PowerShell**; the installed app
+   (Phase 6) will show its own name. If no toast ever appears, check Windows Settings → System →
+   Notifications (and Focus / Do not disturb).
+9. **Single instance** — start the exe a second time while it runs: no second icon; the card opens.
+
+## 4. Undo the bridge install (any time)
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\uninstall-bridge.ps1

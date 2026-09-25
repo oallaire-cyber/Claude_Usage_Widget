@@ -35,8 +35,25 @@ cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
 powershell -NoProfile -ExecutionPolicy Bypass -File tools/tests/Test-InstallBridge.ps1
 cd app && npm run tauri dev                # run the app
+cd app && npx tauri build --debug --no-bundle   # standalone debug exe (frontend embedded) → target/debug/claude-usage-widget.exe
 cargo build --release -p cuw-bridge        # bridge binary
+node tools/gen-preview-views.mjs           # regenerate app/src/preview/views.json from the core (after logic changes)
+cd app && npm run build && node scripts/screenshots.mjs [--lang fr]   # preview screenshots → docs/screenshots (uses Edge)
 ```
+
+Run the app against fake data: set `CUW_DATA_DIR` to a temp folder containing a `state.json`. It still
+reads the real `~/.claude.json` and Claude Desktop history (read-only).
+
+## App architecture (Phases 3–5)
+
+- `crates/core`: `tray.rs` (tone rules + ring rasteriser, pixel tests), `view.rs` (merged windows + pace
+  + tone, sent to the frontend), `text.rs` (tooltip and toast wording, EN/FR, local time injected).
+- `app/src-tauri/src`: `engine.rs` (the one thread that loads, merges, notifies, updates the tray —
+  never hold a lock across a Tauri call, see D-18), `ui.rs` (tray, menu, popup/pinned/settings windows),
+  `data.rs` (source loading by mtime), `placement.rs` (popup geometry), `settings.rs`, `sys.rs` (Win32
+  FFI: accent, UI language, rounded corners), `paths.rs`.
+- `app/src`: one bundle for the three windows, chosen by window label; `?view=…` preview mode in a
+  plain browser. Text for the card lives in `i18n.ts`.
 
 ## Conventions
 

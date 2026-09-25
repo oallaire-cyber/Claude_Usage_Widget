@@ -151,3 +151,86 @@ observations. If a future version writes the block with another shape, only this
 - For Desktop-only data (no reset times) a new cycle is a drop of more than 5 points.
 - With notifications disabled, state still advances silently, so re-enabling does not replay old warnings.
 - Default thresholds: session 80/95 %, weekly 75/90 %; other windows get none unless configured.
+
+## D-17 · 2026-09-25 · Tray colour rules
+`cuw_core::tray::tone`, pixel-tested:
+- **Grey** unless the window's status is `ok` (stale, reset, no data).
+- **Red** at ≥ 90 % used, whatever the pace.
+- Otherwise by pace ratio: **red** ≥ 1.75×, **amber** ≥ 1.1×, else **blue**.
+- When the §4b guards apply (< 20 % used or first 10 % of the window) or no pace exists (Desktop-only
+  data, windows of unknown length), plain thresholds: **amber** ≥ 70 %, else blue (the prompt's §5 lists
+  "≥ 70 %" as a state; it is the natural plain threshold).
+- The ring shows the **session** only (fill = displayed %, grey and empty without a session). A weekly
+  window close to its limit does not change the tray colour — see BACKLOG.
+- Rendered at runtime with 4×4 supersampling, 16/20/24/32 px chosen from the primary monitor's scale;
+  the unfilled track is a half-transparent grey so it reads on light and dark taskbars.
+
+## D-18 · 2026-09-25 · One engine thread, no lock held across UI calls
+Tauri runs tray/window updates on the main thread and blocks the caller until done. So a single
+`cuw-engine` thread owns loading, merging, notifications and tray updates; other threads (file watcher,
+menu and window handlers, commands) only send it messages or take short locks. No lock is held while a
+Tauri call is made. Windows are created from worker threads (creating a WebView inside a main-thread
+event handler can deadlock on Windows).
+- Sources are re-read when their modification time changes, on a file notification (debounced 150 ms)
+  and on a 15 s tick (statuses and countdowns move with time; also catches missed notifications). A file
+  caught mid-write (invalid JSON) keeps the previous values.
+- Watched folders (non-recursive): the data folder, the folder of `~/.claude.json`, and any existing
+  Claude Desktop folder; events for other files are ignored.
+
+## D-19 · 2026-09-25 · App files and settings
+- The app writes only in the data folder shared with the bridge: `settings.json` (language, notification
+  config, pinned state and position) and `notify-state.json` (which alerts fired this cycle), both
+  written temp-file-then-rename. `CUW_DATA_DIR` overrides the folder, as for the bridge.
+- "Start with Windows" has no copy in `settings.json`: the registry entry managed by
+  `tauri-plugin-autostart` (HKCU `Run`) is the only truth. The entry passes `--autostart`; a login start
+  stays quiet, while a manual start shows the card once so the user sees the app is running.
+- Settings apply immediately on change (Windows 11 style, no Save button). Thresholds are sanitised
+  (1–100, sorted, deduplicated) in Rust, whatever the view sends.
+- `~/.claude.json` honours `CLAUDE_CONFIG_DIR` when set, as Claude Code does.
+
+## D-20 · 2026-09-25 · Popup: solid surface, no Mica
+The prompt allows Mica/acrylic "only if clean". On an undecorated, always-on-top popup Mica needs a
+transparent WebView plus a DWM backdrop, and it can't be checked from an automated run (the screenshots
+come from a browser). A solid Windows 11 flyout palette (#f3f3f3 / #202020 with #fbfbfb / #2b2b2b
+cards) is used instead, with DWM rounded corners and the system shadow. The pinned widget is the only
+transparent window (its semi-transparency is required).
+- Popup placement (`placement.rs`, unit-tested): the taskbar edge is where the monitor's work area is
+  smaller than the monitor (nearest edge when it auto-hides); the card sits 12 px from it, centred on the
+  tray icon and clamped inside that monitor's work area. The frontend reports its content height and the
+  window is re-sized and re-anchored.
+- A tray click within 300 ms of the popup losing focus is the click that closed it: it does not reopen.
+- Accent colour: read from `HKCU\Software\Microsoft\Windows\DWM\AccentColor`, used for interactive
+  elements only (toggles, focus, pressed pin). The usage colours stay fixed so blue/amber/red keep their
+  meaning whatever the accent.
+- Language: `GetUserDefaultUILanguage`; French for any French locale, English otherwise; overridable.
+
+## D-21 · 2026-09-25 · Overall status follows session and weekly windows (amends D-14)
+Found running the app on this machine: Claude Desktop's `xu` (extra usage) value was last written at
+08:54, so it was stale all evening and made the **whole** view "stale" — the popup then said "not
+updated for < 1 min" (measured from the freshest value). Now the overall `stale` / `window_reset`
+status is judged on the session and weekly windows when either exists (all windows otherwise). Each
+window keeps its own status, and the stale banner measures from the oldest stale window.
+
+## D-22 · 2026-09-25 · Preview mode and screenshots
+- The preview page (`index.html?view=…&state=…&theme=…&lang=…`) renders fixture views that are
+  **generated by the core** (`crates/core/examples/preview_views.rs` → `app/src/preview/views.json`,
+  via `node tools/gen-preview-views.mjs`), so the screenshots show what the real merge, pace and tone
+  logic produce. Fixed clock: Wed 2026-09-23 14:32 Paris.
+- Screenshots are taken with Playwright driving **Microsoft Edge** (`channel: "msedge"`), the engine of
+  WebView2, rather than downloading Playwright's own Chromium. States: normal, ≥ 70 %, ≥ 90 %, stale,
+  window reset, no data (required), plus extra window and Desktop-only; light and dark; English and
+  French; plus pinned widget and settings.
+- Checked in the real app too (debug build, fake data folder): popup render and anchoring, live update
+  on file change, single instance, pinned mode with position restore, one toast recorded. The screen was
+  locked, so the capture used `PrintWindow` on the app's own windows only (no full-screen capture).
+
+## D-23 · 2026-09-25 · Toast identity
+`tauri-plugin-notification` uses the app identifier (`com.oallaire.claudeusagewidget`) as the toast
+sender only for an installed app; a build run from `target\debug|release` shows toasts under Windows
+PowerShell's identity. The installer (Phase 6) registers the identity through its Start-menu shortcut.
+
+## D-24 · 2026-09-25 · `cuw-app` built as a plain Rust library
+The scaffold's `crate-type = ["staticlib", "cdylib", "rlib"]` exists for Tauri's mobile targets. On this
+machine linking the extra DLL failed intermittently (LNK1104 on `cuw_app_lib.dll.exp`, a file lock)
+whenever test and app builds alternated. The app is Windows-desktop only, so the crate is `rlib` only:
+no DLL link step, faster builds, same executable.
