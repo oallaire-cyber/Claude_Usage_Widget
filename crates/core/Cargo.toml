@@ -1,0 +1,11 @@
+[package]
+name = "cuw-core"
+description = "Claude Usage Widget - pure logic shared by the bridge and the app (no I/O)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true

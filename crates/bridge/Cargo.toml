@@ -1,0 +1,15 @@
+[package]
+name = "cuw-bridge"
+description = "Claude Usage Widget - Claude Code statusLine bridge"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[[bin]]
+name = "cuw-bridge"
+path = "src/main.rs"
+
+[dependencies]
+serde_json.workspace = true
+cuw-core.workspace = true

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(~/.claude/.credentials.json)",
+      "Read(~/.claude.json)",
+      "Read(~/AppData/Roaming/Claude/**)",
+      "Edit(~/.claude/**)",
+      "Bash(cat *credentials*)",
+      "Bash(Get-Content *credentials*)"
+    ]
+  }
+}

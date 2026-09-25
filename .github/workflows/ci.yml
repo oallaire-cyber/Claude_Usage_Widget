@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Frontend install
+        working-directory: app
+        run: npm ci
+
+      # The Tauri crate embeds ../dist at compile time, so the frontend is built before clippy/test.
+      - name: Frontend typecheck + build
+        working-directory: app
+        run: npm run build
+
+      - name: cargo fmt
+        run: cargo fmt --all -- --check
+
+      - name: cargo clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: cargo test
+        run: cargo test --workspace
+
+      - name: Install-script tests (Windows PowerShell 5.1)
+        shell: powershell
+        run: |
+          if (Test-Path tools/tests/Test-InstallBridge.ps1) {
+            powershell -NoProfile -ExecutionPolicy Bypass -File tools/tests/Test-InstallBridge.ps1
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }

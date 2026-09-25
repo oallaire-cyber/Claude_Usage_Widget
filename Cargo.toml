@@ -1,0 +1,26 @@
+[workspace]
+resolver = "2"
+members = ["crates/core", "crates/bridge", "app/src-tauri"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Olivier Allaire"]
+repository = "https://github.com/oallaire-cyber/Claude_Usage_Widget"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+cuw-core = { path = "crates/core" }
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true
+
+# The bridge is on Claude Code's hot path: optimise for size and start-up.
+[profile.release.package.cuw-bridge]
+opt-level = "s"

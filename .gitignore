@@ -1,0 +1,34 @@
+# Build output
+/target/
+node_modules/
+dist/
+dist-ssr/
+app/src-tauri/gen/schemas
+
+# Secrets and local environment
+.env
+.env.*
+*.local
+
+# Local runtime state and history (never commit real usage data)
+state.json
+history.jsonl
+*.state.json
+/tmp/
+/scratch/
+
+# Raw extraction output from the source-discovery scripts (only redacted fixtures are committed)
+/tools/out/
+
+# Logs and editor files
+*.log
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.sw?
+.DS_Store
+
+# Test/screenshot tooling output
+test-results/
+playwright-report/
