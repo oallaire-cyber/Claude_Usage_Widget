@@ -36,6 +36,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           projectPath: app
+          # Adds cuw-bridge.exe and the install/uninstall scripts to the installer (DECISIONS.md D-25).
+          args: --config src-tauri/tauri.release.conf.json
           tagName: ${{ github.ref_name }}
           releaseName: "Claude Usage Widget ${{ github.ref_name }}"
           releaseBody: "Unsigned build - see README for the SmartScreen note and install steps."
