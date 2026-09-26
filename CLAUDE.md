@@ -37,6 +37,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools/tests/Test-InstallBrid
 cd app && npm run tauri dev                # run the app
 cd app && npx tauri build --debug --no-bundle   # standalone debug exe (frontend embedded) → target/debug/claude-usage-widget.exe
 cargo build --release -p cuw-bridge        # bridge binary
+cd app && npx tauri build --config src-tauri/tauri.release.conf.json   # NSIS installer (needs the release bridge first; D-25)
 node tools/gen-preview-views.mjs           # regenerate app/src/preview/views.json from the core (after logic changes)
 cd app && npm run build && node scripts/screenshots.mjs [--lang fr]   # preview screenshots → docs/screenshots (uses Edge)
 ```

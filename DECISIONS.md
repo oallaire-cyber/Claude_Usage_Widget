@@ -234,3 +234,24 @@ The scaffold's `crate-type = ["staticlib", "cdylib", "rlib"]` exists for Tauri's
 machine linking the extra DLL failed intermittently (LNK1104 on `cuw_app_lib.dll.exp`, a file lock)
 whenever test and app builds alternated. The app is Windows-desktop only, so the crate is `rlib` only:
 no DLL link step, faster builds, same executable.
+
+## D-25 · 2026-09-26 · Installer contents and layout
+- NSIS, **per-user** (`installMode: currentUser`): no admin prompt, installs to
+  `%LOCALAPPDATA%\Claude Usage Widget\`. The app, its settings and the bridge data are all per-user anyway.
+- The bridge and the scripts are bundled as resources through a separate config,
+  `app/src-tauri/tauri.release.conf.json`, merged only for the installer build
+  (`tauri build --config …`, also passed by the release workflow). Reason: `tauri-build` checks resources
+  at every compile, so listing `target/release/cuw-bridge.exe` in the main config would break `cargo
+  clippy`/`test` and `tauri dev` whenever the release bridge has not been built.
+- Layout: `cuw-bridge.exe` at the install root, `tools\install-bridge.ps1`, `tools\uninstall-bridge.ps1`,
+  `tools\CuwJson.psm1` below it — `install-bridge.ps1` already looks for `..\cuw-bridge.exe`, so the
+  script needs no change. Tested by copying that layout into a folder with spaces and running the
+  install/uninstall pair against fake settings (byte-identical restore for Claude Code's layout, D-11).
+- The installer never runs the install script (checked in the generated `installer.nsi`: its only
+  `ExecWait` calls are the previous-version uninstaller and the WebView2 bootstrapper).
+- Toast identity (D-23): the generated script sets the AppUserModelID `com.oallaire.claudeusagewidget` on
+  the Start-menu shortcut (`SetLnkAppUserModelId`). Autostart (`tauri-plugin-autostart`) records the
+  running exe's path, so it points to the installed copy when ticked from the installed app.
+- The Windows uninstaller does not unhook the bridge from Claude Code (that would mean the installer
+  touching `~/.claude/`); the README says to run `uninstall-bridge.ps1` first. If forgotten, the copied
+  bridge in `%LOCALAPPDATA%\ClaudeUsageWidget\bin` keeps working, so Claude Code's status line does not break.

@@ -3,10 +3,28 @@
 Each check lists exact steps and what you should see. Nothing here has been run on your real
 Claude Code setup: every automated test used fake settings files.
 
+## 0. Run the installer (after Phase 6)
+
+1. Download `Claude Usage Widget_0.1.0_x64-setup.exe` from the **draft** release `v0.1.0` on GitHub
+   (Releases page → the draft → Assets), or use `target\release\bundle\nsis\` from a local build.
+2. Run it. Expected: SmartScreen "Windows protected your PC" (unsigned) → **More info → Run anyway**;
+   **no** administrator prompt; it installs to `%LOCALAPPDATA%\Claude Usage Widget\`.
+3. In that folder you should see `claude-usage-widget.exe`, `cuw-bridge.exe`, `uninstall.exe` and a
+   `tools` folder with `install-bridge.ps1`, `uninstall-bridge.ps1`, `CuwJson.psm1`.
+4. Check `%USERPROFILE%\.claude\settings.json` is **unchanged** (the installer must not hook the bridge).
+5. Start the app from the Start menu. When a toast appears (check §3.8), it should now be labelled
+   **Claude Usage Widget**, not Windows PowerShell.
+6. Tick **Start with Windows**, then Task Manager → Startup apps → right-click the entry → Open file
+   location: it must open the install folder above, not the repo's `target` folder.
+7. If you are happy with the release: on GitHub, edit the draft release and **Publish** it (it stays a
+   draft until you do).
+
 ## 1. Install the bridge into Claude Code (after Phase 1)
 
-Needs a built bridge: `cargo build --release -p cuw-bridge` in the repo (or, after Phase 6, the copy
-shipped with the installer).
+Needs a built bridge: after Phase 6, the copy shipped with the installer — run the script from the
+install folder instead of the repo:
+`powershell -NoProfile -ExecutionPolicy Bypass -File "$env:LOCALAPPDATA\Claude Usage Widget\tools\install-bridge.ps1"`
+(or, from the repo, `cargo build --release -p cuw-bridge` first and use the steps below).
 
 1. Open **Windows PowerShell** (5.1) in `C:\Users\olive\Documents\Claude_Usage_Widget`.
 2. Dry look first — what it will change: your `~/.claude/settings.json` currently has **no** `statusLine`.
@@ -33,7 +51,7 @@ shipped with the installer).
 
 ## 3. The tray app (after Phases 3–5)
 
-Until the installer exists (Phase 6), run it from the repo in **Windows PowerShell**:
+Easiest: install it (§0) and start it from the Start menu. Or run it from the repo in **Windows PowerShell**:
 ```powershell
 cd C:\Users\olive\Documents\Claude_Usage_Widget\app
 npm ci
@@ -65,16 +83,18 @@ DECISIONS.md D-22; what needs your eyes and mouse:
    listed. Sign out and in: only the tray icon (and the pinned widget, if pinned) appears, no card.
    Untick to remove the entry.
 8. **Notifications** — when usage crosses 80 % (session) or 75 % (weekly), one toast appears, once per
-   window. With this development build the toast is labelled **Windows PowerShell**; the installed app
-   (Phase 6) will show its own name. If no toast ever appears, check Windows Settings → System →
+   window. From a repo build the toast is labelled **Windows PowerShell**; the installed app shows its
+   own name. If no toast ever appears, check Windows Settings → System →
    Notifications (and Focus / Do not disturb).
 9. **Single instance** — start the exe a second time while it runs: no second icon; the card opens.
 
 ## 4. Undo the bridge install (any time)
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\uninstall-bridge.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:LOCALAPPDATA\Claude Usage Widget\tools\uninstall-bridge.ps1"
 ```
+(or `tools\uninstall-bridge.ps1` from the repo). Do this **before** uninstalling the app from Windows
+Settings → Apps, which removes the script.
 Expected: `Backup: ...`, `statusLine removed.`, and the copied `cuw-bridge.exe` deleted. Your
 settings file returns exactly to what it was before install. If a Claude Code session is running the
 bridge at that moment, deleting the exe may fail with a warning — delete it later.

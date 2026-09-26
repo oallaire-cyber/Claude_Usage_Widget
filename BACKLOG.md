@@ -9,5 +9,7 @@ Ideas outside the current scope (PROMPT.md §2.5). One line of rationale each. N
 - **Mica backdrop for the popup** — would match Windows 11 flyouts more closely; needs a transparent WebView and a manual visual check (D-20).
 - **Popup polish nits** (budget used): the hero ring area could be more compact when there is one window; settings window title does not switch language until reopened; the reset row's centre could show the next reset time.
 - **French screenshots in the README** — both languages are captured in `docs/screenshots/`; the README (Phase 6) will likely show English only.
+- **Unhook the bridge from the Windows uninstaller** — would save a manual step, but means the installer touching `~/.claude/settings.json`, which the prompt keeps in Olivier's hands (D-25).
+- **Code-sign the installer** — removes the SmartScreen warning; needs a paid certificate.
 - **Job-object assignment race** — the chained command's children spawned in the first microseconds before job assignment escape the kill-on-timeout; would need `CREATE_SUSPENDED` + resume via FFI. Low risk for status-line scripts.
 
