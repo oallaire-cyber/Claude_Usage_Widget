@@ -32,7 +32,7 @@ More states (stale data, window reset, no data yet, Claude Desktop only, French)
 
 ## Install
 
-1. Download `Claude Usage Widget_0.1.0_x64-setup.exe` from the
+1. Download `Claude.Usage.Widget_0.1.0_x64-setup.exe` from the
    [Releases page](https://github.com/oallaire-cyber/Claude_Usage_Widget/releases) and run it.
    It installs for your user only (no administrator rights), into
    `%LOCALAPPDATA%\Claude Usage Widget\`, with a Start-menu shortcut.

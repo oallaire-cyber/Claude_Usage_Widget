@@ -8,18 +8,18 @@
 - [x] Phase 3 — Tray icon
 - [x] Phase 4 — Popup card
 - [x] Phase 5 — Alerts, settings, pinned mode
-- [ ] Phase 6 — Release
+- [x] Phase 6 — Release (tag `v0.1.0`, release run 36229934350, draft release with installer)
 
 ## Definition of Done
 
-- [x] `cargo test`, clippy, fmt and frontend build pass locally and in CI on `main` — true at end of run 1 (CI run 36169256569) and run 2 (CI run 36185017692); re-check every run
+- [x] `cargo test`, clippy, fmt and frontend build pass locally and in CI on `main` — true at end of run 1 (CI run 36169256569) and run 2 (CI run 36185017692) and run 3 (CI run 36229761335)
 - [x] Bridge: all parser fixtures pass; exits 0 on malformed input; median runtime recorded and < 50 ms (or deviation explained in DECISIONS.md) — 29.5 ms, D-10
 - [x] Install/uninstall scripts pass tests against fake settings files; uninstall restores previous `statusLine` exactly — 50 assertions, byte-identical restore
 - [x] Core: pace, staleness and notification-once logic unit-tested — `merge.rs`, `pace.rs`, `notify.rs`
 - [x] Tray icon colour thresholds verified by pixel test — `crates/core/src/tray.rs` (every size and tone, threshold boundaries)
 - [x] Preview screenshots exist in `docs/screenshots/` for every state in §5, light and dark — plus extra-window, Desktop-only, pinned, settings; English and French
-- [ ] Installer built by CI from tag `v0.1.0` and attached to a draft release
-- [ ] README, MANUAL_CHECKS, DECISIONS, BACKLOG complete; PROGRESS shows every phase done
+- [x] Installer built by CI from tag `v0.1.0` and attached to a draft release — `Claude.Usage.Widget_0.1.0_x64-setup.exe` (2.2 MB), release run 36229934350
+- [x] README, MANUAL_CHECKS, DECISIONS, BACKLOG complete; PROGRESS shows every phase done
 
 ## Prerequisites (checked 2026-09-25)
 
@@ -29,13 +29,9 @@ WebView2 153.0.4234.48 · Windows PowerShell 5.1.26100 · Playwright 1.63.0 avai
 
 ## Next step
 
-Run 3 does **Phase 6 — Release**: NSIS installer bundling the app **and** `cuw-bridge.exe` (as a
-resource next to the app, so `tools/install-bridge.ps1` can find it — check how the script locates the
-bridge today), without running the install script; README (screenshots from `docs/screenshots/`,
-install steps, SmartScreen note, data flow, privacy statement, known limitations, credits for the
-reference projects in §4b); tag `v0.1.0`; release workflow attaches the installer to a draft release.
-Check the installer registers the toast identity (D-23) and that the autostart entry points to the
-installed exe.
+None for the builder: every phase is done and every Definition-of-Done box is ticked (PROMPT.md §7 —
+stop). What remains is Olivier's: MANUAL_CHECKS.md §0 (installer), §1–§2 (hook the bridge, compare with
+claude.ai), §3 (the tray app), then publish the draft release if satisfied.
 
 ## Known issues
 
@@ -47,7 +43,13 @@ installed exe.
 - Tray tooltip, right-click menu, blur-to-close, dragging the pinned widget, its transparency, toast
   appearance and the autostart entry could not be seen from this run (the screen was locked; captures
   used `PrintWindow` on the app's own windows). All are in MANUAL_CHECKS.md §3.
-- Toasts from a `target\debug` build carry Windows PowerShell's name (D-23) until the app is installed.
+- Toasts from a `target\debug` build carry Windows PowerShell's name (D-23); the installer sets the
+  app's own identity on its Start-menu shortcut (D-25) — confirming it needs an install (MANUAL_CHECKS §0).
+- The installer itself has not been run on this machine (it would register an app on Olivier's
+  profile); its contents were checked in the generated NSIS script and the bundled scripts were tested in
+  the installed layout against fake settings. Running it is MANUAL_CHECKS §0.
+- The `v0.1.0` tag points at the commit before the last docs fix (README gives the release asset's
+  exact name, `Claude.Usage.Widget_…`, since GitHub replaces spaces with dots). The installer is unaffected.
 
 ## Run reports
 
@@ -122,3 +124,32 @@ Nothing blocked; no anti-loop entries.
 **Manual checks for Olivier now:** `MANUAL_CHECKS.md` §3 (the tray app — nine short checks: icon,
 tooltip, card placement and closing, menu, pinned widget drag, settings, start with Windows, toasts,
 single instance). §1 and §2 still apply if not done yet.
+
+### Run 3 — 2026-09-26 — Phase 6
+
+**Completed**
+- NSIS installer, per-user (no admin prompt), bundling the app, `cuw-bridge.exe` and the
+  install/uninstall scripts; it does not run the install script. The bundled files come from a
+  release-only config so ordinary builds do not need the release bridge (D-25). The Start-menu shortcut
+  carries the app's notification identity. The bundled scripts were run from the installed layout
+  (folder with spaces) against fake settings: install, then uninstall restores the file byte-for-byte.
+- README: screenshots, install and uninstall steps, SmartScreen note, data flow, privacy statement,
+  known limitations, build steps, credits (licences checked: two MIT, one without a licence — ideas
+  only, no code reused from any).
+- Tag `v0.1.0`; the release workflow built the installer on GitHub and attached it to a **draft**
+  release (`Claude.Usage.Widget_0.1.0_x64-setup.exe`, 2.2 MB). CI green on `main` (run 36229761335);
+  locally fmt, clippy, 110 Rust tests and 50 install-script checks pass.
+
+**Definition of Done:** 8 of 8 ticked. The project is complete per PROMPT.md §7.
+
+**Deviations from the prompt, and why**
+- The Windows uninstaller does not unhook the bridge from Claude Code (it would have to edit
+  `~/.claude/settings.json`); the README says to run `uninstall-bridge.ps1` first (D-25, BACKLOG).
+- The installer was not run on this machine — only inspected — to avoid registering an app on
+  Olivier's profile unasked (MANUAL_CHECKS §0).
+
+**Open issues:** see Known issues. Nothing blocked; no anti-loop entries.
+
+**Manual checks for Olivier now:** `MANUAL_CHECKS.md` §0 (run the installer, check the files, the
+toast name and the autostart path, then publish the draft release), §1–§2 (hook the bridge using the
+installed script, compare with claude.ai), §3 (the tray app).

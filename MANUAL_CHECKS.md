@@ -5,7 +5,7 @@ Claude Code setup: every automated test used fake settings files.
 
 ## 0. Run the installer (after Phase 6)
 
-1. Download `Claude Usage Widget_0.1.0_x64-setup.exe` from the **draft** release `v0.1.0` on GitHub
+1. Download `Claude.Usage.Widget_0.1.0_x64-setup.exe` from the **draft** release `v0.1.0` on GitHub
    (Releases page → the draft → Assets), or use `target\release\bundle\nsis\` from a local build.
 2. Run it. Expected: SmartScreen "Windows protected your PC" (unsigned) → **More info → Run anyway**;
    **no** administrator prompt; it installs to `%LOCALAPPDATA%\Claude Usage Widget\`.
