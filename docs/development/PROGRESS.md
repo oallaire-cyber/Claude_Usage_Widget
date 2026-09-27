@@ -30,8 +30,10 @@ WebView2 153.0.4234.48 · Windows PowerShell 5.1.26100 · Playwright 1.63.0 avai
 ## Next step
 
 None for the builder: every phase is done and every Definition-of-Done box is ticked (PROMPT.md §7 —
-stop). What remains is Olivier's: MANUAL_CHECKS.md §0 (installer), §1–§2 (hook the bridge, compare with
-claude.ai), §3 (the tray app), then publish the draft release if satisfied.
+stop). 2026-09-27: Olivier installed and ran the first draft installer on his laptop without problems.
+Before publication, an audit led to the fixes in D-26, the history was rewritten to GitHub's private
+commit address, and `v0.1.0` was re-tagged on the final commit. What remains is Olivier's: a quick
+reinstall from the new draft release, then make the repository public and publish the release.
 
 ## Known issues
 
@@ -45,11 +47,8 @@ claude.ai), §3 (the tray app), then publish the draft release if satisfied.
   used `PrintWindow` on the app's own windows). All are in MANUAL_CHECKS.md §3.
 - Toasts from a `target\debug` build carry Windows PowerShell's name (D-23); the installer sets the
   app's own identity on its Start-menu shortcut (D-25) — confirming it needs an install (MANUAL_CHECKS §0).
-- The installer itself has not been run on this machine (it would register an app on Olivier's
-  profile); its contents were checked in the generated NSIS script and the bundled scripts were tested in
-  the installed layout against fake settings. Running it is MANUAL_CHECKS §0.
-- The `v0.1.0` tag points at the commit before the last docs fix (README gives the release asset's
-  exact name, `Claude.Usage.Widget_…`, since GitHub replaces spaces with dots). The installer is unaffected.
+- The installer was not run by the builder (it would register an app on Olivier's profile); Olivier ran
+  it himself on 2026-09-27 (MANUAL_CHECKS §0).
 
 ## Run reports
 
