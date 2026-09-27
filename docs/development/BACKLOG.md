@@ -11,5 +11,7 @@ Ideas outside the current scope (PROMPT.md §2.5). One line of rationale each. N
 - **French screenshots in the README** — both languages are captured in `docs/screenshots/`; the README (Phase 6) will likely show English only.
 - **Unhook the bridge from the Windows uninstaller** — would save a manual step, but means the installer touching `~/.claude/settings.json`, which the prompt keeps in Olivier's hands (D-25).
 - **Code-sign the installer** — removes the SmartScreen warning; needs a paid certificate.
+- **Verify the settings round-trip before writing** (D-26) — PowerShell 5.1's parser alters rare values (a `"\/Date(…)\/"` string, integers above ~1e28, lone surrogate escapes); re-parsing the output and comparing with the input would refuse instead. Unlikely in `settings.json`.
+- **Resolve a relative `-SettingsPath` once** (D-26) — `Test-Path` and `[IO.File]` resolve relative paths against different folders; only affects a custom argument, the default is absolute.
 - **Job-object assignment race** — the chained command's children spawned in the first microseconds before job assignment escape the kill-on-timeout; would need `CREATE_SUSPENDED` + resume via FFI. Low risk for status-line scripts.
 

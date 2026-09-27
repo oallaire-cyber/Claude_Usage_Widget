@@ -255,3 +255,24 @@ no DLL link step, faster builds, same executable.
 - The Windows uninstaller does not unhook the bridge from Claude Code (that would mean the installer
   touching `~/.claude/`); the README says to run `uninstall-bridge.ps1` first. If forgotten, the copied
   bridge in `%LOCALAPPDATA%\ClaudeUsageWidget\bin` keeps working, so Claude Code's status line does not break.
+
+## D-26 · 2026-09-27 · Pre-publication audit and the fixes it led to
+
+Before making the repository public, a read-only audit covered what could harm a user: the install
+scripts, the bridge, the reading of `~/.claude.json`, the zero-network promise, the Tauri security
+configuration and the workflows. Nothing critical or high. Olivier decided what to act on:
+
+- **Fixed — reinstall to another folder lost the original statusLine** (medium). When the current
+  `statusLine` is itself a `cuw-bridge.exe`, `install-bridge.ps1` now keeps the existing `install.json`
+  record instead of recording the old bridge as "previous" (with no record left, nothing is recorded, so
+  uninstall removes the key). Tests: cases 8 and 9.
+- **Fixed — release workflow hardening** (medium): third-party actions pinned to commit SHAs, checkout
+  with `persist-credentials: false`, `npm ci --ignore-scripts` (no dependency has an install script;
+  build checked locally). CI gets `permissions: contents: read` (low).
+- **Fixed — temp file left in `~/.claude` when the replace fails** (low): `Write-CuwFileAtomic` deletes
+  it in a `finally`. Test: case 10 (settings file locked).
+- **Documented in the README's known limitations** (low): background processes started by a chained
+  status line end with the bridge (job object); a chained status line slower than 2 s is replaced by the
+  default line; close Claude Code sessions before running the install script (a settings change written
+  in between would be lost).
+- **Backlog** (low): rare value changes from PowerShell 5.1's JSON parser; relative `-SettingsPath`.

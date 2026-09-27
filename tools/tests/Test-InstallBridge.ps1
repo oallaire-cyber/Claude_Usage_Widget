@@ -224,6 +224,36 @@ Assert ((Invoke-Install $c) -eq 0) 'install exits 0'
 Assert ((Invoke-Uninstall $c) -eq 0) 'uninstall exits 0'
 Assert ((Canon (ReadText $c.Settings)) -eq (Canon $compact)) 'same JSON after install + uninstall'
 
+Write-Host 'Case 8: reinstall to another folder keeps the original statusLine on record'
+$c = New-Case 'moved'
+WriteText $c.Settings $withSl
+Assert ((Invoke-Install $c) -eq 0) 'first install exits 0'
+$firstBin = $c.Bin
+$c.Bin = Join-Path $c.Dir 'bin2'
+Assert ((Invoke-Install $c) -eq 0) 'install to a second folder exits 0'
+Assert ((Get-StatusLine $c).command -eq (ExpectedCommand $c)) 'statusLine points at the new bridge'
+$rec = ConvertFrom-Json (ReadText (Join-Path $c.Data 'install.json'))
+Assert ($rec.previous_status_line.command -eq 'bash ~/.claude/statusline.sh --flag "quoted arg"') 'record still holds the original command, not the first bridge'
+Assert ((Invoke-Uninstall $c) -eq 0) 'uninstall exits 0'
+Assert ((ReadText $c.Settings) -eq $withSl) 'original statusLine restored byte-for-byte'
+Assert (Test-Path (Join-Path $firstBin 'cuw-bridge.exe')) 'first copy untouched (only the recorded install dir is cleaned)'
+
+Write-Host 'Case 9: statusLine already a bridge, no record left: not recorded as "previous"'
+$c = New-Case 'orphan'
+WriteText $c.Settings "{`n  `"statusLine`": {`n    `"type`": `"command`",`n    `"command`": `"C:/Old/bin/cuw-bridge.exe`"`n  }`n}`n"
+Assert ((Invoke-Install $c) -eq 0) 'install exits 0'
+$rec = ConvertFrom-Json (ReadText (Join-Path $c.Data 'install.json'))
+Assert ($rec.had_status_line -eq $false -and $null -eq $rec.previous_status_line) 'old bridge not recorded as previous statusLine'
+
+Write-Host 'Case 10: a failed write leaves no temp file behind'
+$c = New-Case 'locked'
+WriteText $c.Settings "{`n  `"model`": `"opus`"`n}`n"
+$lock = [System.IO.File]::Open($c.Settings, 'Open', 'Read', 'Read')
+try { $code = Invoke-Install $c } finally { $lock.Close() }
+Assert ($code -ne 0) 'install fails while settings is locked'
+Assert ((ReadText $c.Settings) -eq "{`n  `"model`": `"opus`"`n}`n") 'settings untouched'
+Assert (@(Get-ChildItem -LiteralPath (Split-Path $c.Settings) -Filter '*.cuw-tmp-*').Count -eq 0) 'no temp file left'
+
 Remove-Item -LiteralPath $root -Recurse -Force
 Write-Host ''
 Write-Host "Install-script tests: $script:passes passed, $script:failures failed"

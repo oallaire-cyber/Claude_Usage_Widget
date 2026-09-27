@@ -42,7 +42,8 @@ More states (stale data, window reset, no data yet, Claude Desktop only, French)
    > the publisher is unknown, which is expected for an unsigned build.
 
 2. **Hook the bridge into Claude Code** — the installer deliberately does *not* do this, so nothing
-   changes in your Claude Code settings until you choose to. In **Windows PowerShell**:
+   changes in your Claude Code settings until you choose to. Close your Claude Code sessions first,
+   then in **Windows PowerShell**:
 
    ```powershell
    powershell -NoProfile -ExecutionPolicy Bypass -File "$env:LOCALAPPDATA\Claude Usage Widget\tools\install-bridge.ps1"
@@ -123,6 +124,11 @@ card's footer shows the source and "Data as of HH:MM".
   status line or Claude Code's usage cache starts providing one.
 - **Sources 2 and 3 are undocumented** (`~/.claude.json`'s usage cache and Claude Desktop's history).
   Their format may change or disappear with any update; the app ignores them if they stop parsing.
+- **If you already had a status line**, the bridge runs it for you, with two differences: if it takes
+  longer than 2 seconds, the widget's own line is shown instead; and any background process it starts
+  is stopped when the bridge exits.
+- **Close Claude Code before running the install script.** A settings change Claude Code writes while
+  the script runs (e.g. a newly allowed permission) would be lost.
 - **Unsigned build** — SmartScreen warning on first run (see Install).
 - Built and checked on Windows 11 only; English and French.
 

@@ -88,11 +88,16 @@ function Write-CuwFileAtomic([string]$Path, [string]$Text) {
     $dir = Split-Path -Parent $Path
     if ($dir -and -not (Test-Path -LiteralPath $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
     $tmp = "$Path.cuw-tmp-$PID"
-    [System.IO.File]::WriteAllBytes($tmp, $bytes)
-    if (Test-Path -LiteralPath $Path) {
-        [System.IO.File]::Replace($tmp, $Path, [NullString]::Value)
-    } else {
-        [System.IO.File]::Move($tmp, $Path)
+    try {
+        [System.IO.File]::WriteAllBytes($tmp, $bytes)
+        if (Test-Path -LiteralPath $Path) {
+            [System.IO.File]::Replace($tmp, $Path, [NullString]::Value)
+        } else {
+            [System.IO.File]::Move($tmp, $Path)
+        }
+    } finally {
+        # Only left behind if the replace failed (destination locked, ...): the destination is untouched.
+        if (Test-Path -LiteralPath $tmp) { Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue }
     }
 }
 

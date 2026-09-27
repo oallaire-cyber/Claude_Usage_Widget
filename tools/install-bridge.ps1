@@ -90,12 +90,31 @@ try {
     }
 
     # 4. Record the previous statusLine (exactly as it was) for chaining and uninstall.
+    $recordPath = Join-Path $DataDir 'install.json'
+    $recSettingsExisted = $settingsExisted
+    $recHadStatusLine = (Test-CuwProperty $settings 'statusLine')
+    $recPrevious = $current
+    # The current statusLine may itself be an older bridge (another -InstallDir, or a copy run from the
+    # repo). Then the existing record holds the user's real previous statusLine: keep it. Recording the
+    # old bridge instead would make uninstall restore a command pointing at a deleted exe.
+    if ([string](Get-CuwProperty $current 'command') -match '(^|[\\/"])cuw-bridge\.exe"?\s*$') {
+        if (Test-Path -LiteralPath $recordPath) {
+            $oldRecord = Read-CuwJsonFile $recordPath
+            if (Test-CuwProperty $oldRecord 'settings_existed') { $recSettingsExisted = [bool](Get-CuwProperty $oldRecord 'settings_existed') }
+            $recHadStatusLine = [bool](Get-CuwProperty $oldRecord 'had_status_line')
+            $recPrevious = Get-CuwProperty $oldRecord 'previous_status_line'
+        } else {
+            # No record left: the user's original statusLine is unknown, so uninstall will remove it.
+            $recHadStatusLine = $false
+            $recPrevious = $null
+        }
+    }
     $record = [ordered]@{
         schema               = 1
         settings_path        = [System.IO.Path]::GetFullPath($SettingsPath)
-        settings_existed     = $settingsExisted
-        had_status_line      = (Test-CuwProperty $settings 'statusLine')
-        previous_status_line = $current
+        settings_existed     = $recSettingsExisted
+        had_status_line      = $recHadStatusLine
+        previous_status_line = $recPrevious
         bridge_command       = $bridgeCommand
         installed_at         = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
     }
@@ -120,10 +139,10 @@ try {
         Copy-Item -LiteralPath $SettingsPath -Destination $backup
         Write-Host "Backup: $backup"
     }
-    Write-CuwFileAtomic (Join-Path $DataDir 'install.json') $recordText
+    Write-CuwFileAtomic $recordPath $recordText
     Write-CuwFileAtomic $SettingsPath $settingsText
 
-    if ($null -ne $current) { Write-Host "Previous statusLine recorded; the bridge will keep showing its output." }
+    if ($null -ne $recPrevious) { Write-Host "Previous statusLine recorded; the bridge will keep showing its output." }
     Write-Host "Installed: statusLine now runs $bridgeCommand"
     Write-Host "Restart any running Claude Code session (or send a message) to start feeding the widget."
     exit 0
