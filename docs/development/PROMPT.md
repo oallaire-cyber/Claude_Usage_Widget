@@ -12,10 +12,10 @@ At the start of every run, read `PROGRESS.md` (if it exists) and continue from t
 ## 1. Context
 
 - Owner: Olivier, GitHub account `oallaire-cyber`.
-- Machine: Windows 11, user `olive`, default shell Windows PowerShell 5.1 (not PowerShell 7). Your Bash tool may run Git Bash; prefer Rust/Node tooling over shell-specific scripts, and write any PowerShell for 5.1.
-- Working directory: `C:\Users\olive\Documents\Claude_Usage_Widget` (contains this file and `.claude/settings.json`; do not modify that settings file).
+- Machine: Windows 11, default shell Windows PowerShell 5.1 (not PowerShell 7). Your Bash tool may run Git Bash; prefer Rust/Node tooling over shell-specific scripts, and write any PowerShell for 5.1.
+- Working directory: `%USERPROFILE%\Documents\Claude_Usage_Widget` (contains this file and `.claude/settings.json`; do not modify that settings file).
 - Plan: Claude Max (5x). Olivier works mostly in Claude Code CLI.
-- Other repos live under `C:\Users\olive\Documents`. Never touch them.
+- Other repos live under `%USERPROFILE%\Documents`. Never touch them.
 
 ## 2. Hard rules (non-negotiable)
 

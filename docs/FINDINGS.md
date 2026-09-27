@@ -24,7 +24,7 @@ Consequence: the Fable ring cannot be restored from local data for now. Recorded
 ## A. Status-line payload (primary, documented)
 
 Source: https://code.claude.com/docs/en/statusline (read 2026-09-25). Differences from the prompt's
-summary are in `DECISIONS.md` (D-04). Shape used by the parser:
+summary are in [`DECISIONS.md`](development/DECISIONS.md) (D-04). Shape used by the parser:
 
 ```json
 "rate_limits": {
@@ -51,7 +51,7 @@ extra window, truncated JSON, empty).
   (`skillUsage`/`pluginUsage` are feature-usage counters by name; `cachedExtraUsageDisabledReason` is a
   reason string for "extra usage" being disabled).
 - Consequence: no real fixture can be made. The app still watches the file and parses the block
-  defensively if a future version writes it (shape assumed in `DECISIONS.md`); absent block = source B
+  defensively if a future version writes it (shape assumed in [`DECISIONS.md`](development/DECISIONS.md)); absent block = source B
   absent, never an error.
 
 ## C. Claude Desktop `plan-usage-history.json` (tertiary, undocumented)

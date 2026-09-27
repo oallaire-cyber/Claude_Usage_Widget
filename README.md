@@ -140,7 +140,17 @@ npx tauri build --config src-tauri/tauri.release.conf.json   # installer → tar
 Tests: `cargo test --workspace`, and
 `powershell -NoProfile -ExecutionPolicy Bypass -File tools/tests/Test-InstallBridge.ps1` for the install
 scripts (they only ever touch temporary fake settings files). Design decisions are in
-[`DECISIONS.md`](DECISIONS.md), source discovery in [`docs/FINDINGS.md`](docs/FINDINGS.md).
+[`docs/development/DECISIONS.md`](docs/development/DECISIONS.md), source discovery in
+[`docs/FINDINGS.md`](docs/FINDINGS.md).
+
+## How this was built
+
+This project was built with [Claude Code](https://code.claude.com), Anthropic's coding agent, working
+from a written brief over three runs, with the owner reviewing, testing on real hardware and making the
+calls only a human can. The working files are kept public in
+[`docs/development/`](docs/development/): the original brief (`PROMPT.md`), the progress log and run
+reports, every design decision with its reasoning, the manual test checklist and the backlog of ideas
+left out of scope. [`CLAUDE.md`](CLAUDE.md) holds the notes Claude Code reads when working on the repo.
 
 ## Credits
 
@@ -156,3 +166,10 @@ No code was copied from these projects; they shaped the design, and are thanked 
 
 The pace colouring (used ÷ elapsed, with guards early in a window and near the limit) and the even-spend
 marker follow ideas from these projects.
+
+## Licence
+
+[MIT](LICENSE) © 2026 Olivier Allaire.
+
+This is an independent project, not affiliated with or endorsed by Anthropic. "Claude" is a trademark
+of Anthropic.

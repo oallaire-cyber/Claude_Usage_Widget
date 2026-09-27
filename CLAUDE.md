@@ -1,9 +1,11 @@
 # Claude Usage Widget — working notes for Claude
 
 Windows tray app showing Claude subscription usage (5-hour session + 7-day weekly windows).
-The mission and phase plan live in `PROMPT.md`; state of play in `PROGRESS.md`.
+The working files live in `docs/development/`: mission and phase plan in `PROMPT.md`, state of play in
+`PROGRESS.md`, plus `DECISIONS.md`, `MANUAL_CHECKS.md` and `BACKLOG.md`. A bare file name in a code
+comment (e.g. "DECISIONS.md D-24") refers to that folder.
 
-## Hard rules (summary — PROMPT.md §2 is authoritative)
+## Hard rules (summary — docs/development/PROMPT.md §2 is authoritative)
 
 - Never read `~/.claude/.credentials.json`. Never call any Anthropic endpoint. Never read browser cookies.
 - `~/.claude.json` and `%APPDATA%\Claude\` hold MCP configs that may contain API keys: never load them
@@ -11,7 +13,7 @@ The mission and phase plan live in `PROMPT.md`; state of play in `PROGRESS.md`.
 - The shipped app and bridge make **zero network requests**.
 - Never modify anything under `%USERPROFILE%\.claude\`. Test install scripts against fake files only.
 - Do not modify `.claude/settings.json` in this repo.
-- Scope freeze: new ideas go to `BACKLOG.md`.
+- Scope freeze: new ideas go to `docs/development/BACKLOG.md`.
 
 ## Layout
 
@@ -24,6 +26,7 @@ app/src-tauri           cuw-app crate (tray, file watching, windows)
 tools/                  install/uninstall PowerShell 5.1 scripts, source-discovery scripts
 tools/tests             PowerShell tests for the install scripts (run against temp fake settings)
 docs/                   FINDINGS.md (source discovery), screenshots/
+docs/development        PROMPT, PROGRESS, DECISIONS, MANUAL_CHECKS, BACKLOG (the build's working files)
 ```
 
 ## Commands

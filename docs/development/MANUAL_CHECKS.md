@@ -26,16 +26,16 @@ install folder instead of the repo:
 `powershell -NoProfile -ExecutionPolicy Bypass -File "$env:LOCALAPPDATA\Claude Usage Widget\tools\install-bridge.ps1"`
 (or, from the repo, `cargo build --release -p cuw-bridge` first and use the steps below).
 
-1. Open **Windows PowerShell** (5.1) in `C:\Users\olive\Documents\Claude_Usage_Widget`.
+1. Open **Windows PowerShell** (5.1) in your clone of the repository.
 2. Dry look first — what it will change: your `~/.claude/settings.json` currently has **no** `statusLine`.
 3. Run:
    ```powershell
    powershell -NoProfile -ExecutionPolicy Bypass -File tools\install-bridge.ps1
    ```
    Expected output: `Backup: ...settings.json.bak-YYYYMMDD-HHMMSS` then
-   `Installed: statusLine now runs C:/Users/olive/AppData/Local/ClaudeUsageWidget/bin/cuw-bridge.exe`.
+   `Installed: statusLine now runs C:/Users/<you>/AppData/Local/ClaudeUsageWidget/bin/cuw-bridge.exe`.
 4. Check `%USERPROFILE%\.claude\settings.json`: every other key unchanged, plus
-   `"statusLine": { "type": "command", "command": "C:/Users/olive/AppData/Local/ClaudeUsageWidget/bin/cuw-bridge.exe" }`.
+   `"statusLine": { "type": "command", "command": "C:/Users/<you>/AppData/Local/ClaudeUsageWidget/bin/cuw-bridge.exe" }`.
 5. Start (or continue) a Claude Code session and send one message. The status line under the prompt
    should read like `5h 14% · 7d 8%` (before the first reply it may show `5h -- · 7d --`).
 6. Check `%APPDATA%\ClaudeUsageWidget\state.json` exists and shows `five_hour` / `seven_day`.
@@ -53,7 +53,7 @@ install folder instead of the repo:
 
 Easiest: install it (§0) and start it from the Start menu. Or run it from the repo in **Windows PowerShell**:
 ```powershell
-cd C:\Users\olive\Documents\Claude_Usage_Widget\app
+cd <your clone>\app
 npm ci
 npx tauri build --debug --no-bundle
 ..\target\debug\claude-usage-widget.exe
